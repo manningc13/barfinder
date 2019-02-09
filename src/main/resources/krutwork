@@ -1,0 +1,18 @@
+<script src="scripts/main.js"></script>
+</body>
+
+/*
+Active JavaScript written, produced, and directed by Kurt.
+I give no guarantee that this will work, so I am not liable for any damages this does to our entire website.
+You have been warned.
+*/
+
+//BTW Please drink responsibly
+
+function setUserName() {
+  var myName = prompt('Please enter your name.');
+  localStorage.setItem('name', myName);
+  myHeading.textContent = myName + ' is not as cool as Kurt R.';
+}
+
+document.querySelector('html').onclick = function() {};
