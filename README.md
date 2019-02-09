@@ -20,3 +20,5 @@
 - Map navigation
   - Path finding
 - Use card on phone and use phone to pay at eligible location
+
+this is a test
