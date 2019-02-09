@@ -162,47 +162,79 @@
 
     document.querySelector("#find-my-bar").onclick = function (){
       var button = document.querySelector("#inputlocation").value;
-      console.log(button)
+      console.log(button);
     }
 
   // This is the code to return the user's longitude and latitude, which will display their location upon rendering.
-    var location =
 
   </script>
   <script>
     var map;
     var service;
     var infowindow;
+    var geocoder;
+    var position;
+    var latitude;
+    var longitude;
+    var newlatlng;
+
+    latitude = 42.36;
+    longitude = -71.06;
 
     function initMap() {
       infowindow = new google.maps.InfoWindow();
 
-      var boston = new google.maps.LatLng(42.3504,-71.04847); //dummy
+      var geocoder = new google.maps.Geocoder();
 
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: boston, //insert lat and lng once we have it
-        zoom: 14
+      document.getElementById('find-my-bar').addEventListener('click', function() {
+        geocodeAddress(geocoder, map)
+          .then(function(newlatlng){
+            position = new google.maps.LatLng(newlatlng[0],newlatlng[1]);
+            console.log(position)
+
+             map = new google.maps.Map(document.getElementById('map'), {
+                center: position,
+                zoom: 14
+             });
+
+
+          }).then(function() {
+              var request = {
+                location: position,
+                radius: '1000',
+                type: ['bar'],
+                openNow: true,
+              };
+
+              service = new google.maps.places.PlacesService(map);
+              service.nearbySearch(request, callback);
+          });
+
       });
 
-      var request = {
-        location: boston,
-        radius: '1000',
-        type: ['bar'],
-        openNow: true,
-      };
+      position = new google.maps.LatLng(latitude,longitude); //dummy
 
-      service = new google.maps.places.PlacesService(map);
-      service.nearbySearch(request, callback);
+      map = new google.maps.Map(document.getElementById('map'), {
+          center: position,
+          zoom: 14
+      });
 
-      /*service.findPlaceFromQuery(request, function(results, status) {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            for (var i = 0; i < results.length; i++) {
-              createMarker(results[i]);
-            }
+    }
 
-            map.setCenter(results[0].geometry.location);
+    function geocodeAddress(geocoder, resultsMap) {
+      var address = document.getElementById('inputlocation').value;
+      return new Promise(function(resolve, reject){
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            //console.log(results[0].geometry.location.lat())
+            //latitude = results[0].geometry.location.lat();
+            //longitude = results[0].geometry.location.lng();
+            resolve([results[0].geometry.location.lat(), results[0].geometry.location.lng()])
+          } else {
+            reject('Geocode was not successful for the following reason: ' + status);
           }
-      });*/
+        });
+      })
     }
 
     function callback(results, status) {
@@ -217,7 +249,8 @@
     function createMarker(place) {
       var marker = new google.maps.Marker({
         map: map,
-        position: place.geometry.location
+        position: place.geometry.location,
+
       });
 
       google.maps.event.addListener(marker, 'click', function() {
