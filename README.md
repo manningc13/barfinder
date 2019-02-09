@@ -1,2 +1,8 @@
-# barfinder
-This project is creating a website that will find the nearest bar.
+# Closest Bar Idea:
+
+###Request closest bar
+#####Filters
+- Cheapest Bar
+- Closest
+- Type of Bar
+  - Atmosphere
