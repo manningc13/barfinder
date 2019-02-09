@@ -161,23 +161,72 @@
   // This is the code for the button. The below code only codes in a button that, once press, reveals "it works!" in the console. We need to code the button to return the closest bar on the map using the address entered.
 
     document.querySelector("#find-my-bar").onclick = function (){
-      console.log("It works!")
+      var button = document.querySelector("#inputlocation").value;
+      console.log(button)
     }
 
-  // This is the code to return the user's longitude and lattiude, which will display their location upon rendering.
-
+  // This is the code to return the user's longitude and latitude, which will display their location upon rendering.
+    var location =
 
   </script>
   <script>
     var map;
+    var service;
+    var infowindow;
+
     function initMap() {
+      infowindow = new google.maps.InfoWindow();
+
+      var boston = new google.maps.LatLng(42.3504,-71.04847); //dummy
+
       map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: -34.397, lng: 150.644},
-        zoom: 8
+        center: boston, //insert lat and lng once we have it
+        zoom: 14
+      });
+
+      var request = {
+        location: boston,
+        radius: '1000',
+        type: ['bar'],
+        openNow: true,
+      };
+
+      service = new google.maps.places.PlacesService(map);
+      service.nearbySearch(request, callback);
+
+      /*service.findPlaceFromQuery(request, function(results, status) {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            for (var i = 0; i < results.length; i++) {
+              createMarker(results[i]);
+            }
+
+            map.setCenter(results[0].geometry.location);
+          }
+      });*/
+    }
+
+    function callback(results, status) {
+      if (status == google.maps.places.PlacesServiceStatus.OK) {
+        for (var i = 0; i < results.length; i++) {
+          var place = results[i];
+          createMarker(results[i]);
+        }
+      }
+    }
+
+    function createMarker(place) {
+      var marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location
+      });
+
+      google.maps.event.addListener(marker, 'click', function() {
+          infowindow.setContent(place.name);
+          infowindow.open(map, this);
       });
     }
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsjREtKsKSf7F3xf0lXNpkkAjibiXbVKM&callback=initMap"
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsjREtKsKSf7F3xf0lXNpkkAjibiXbVKM&libraries=places&callback=initMap"
   async defer></script>
 </body>
 </html>
